@@ -1,0 +1,30 @@
+.datepicker-cell,
+.datepicker-days,
+.datepicker-controls button svg,
+.datepicker-controls button,
+.datepicker-picker,
+.datepicker-title {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+.datepicker-cell.day:not(.disabled):not(.today):not(.selected) {
+    color: #000000 !important;
+}
+
+.datepicker-cell.day.prev:not(.disabled):not(.today):not(.selected),
+.datepicker-cell.day.next:not(.disabled):not(.today):not(.selected) {
+    color: #000000 !important;
+    opacity: 1 !important;
+}
+
+.datepicker-cell.day.disabled {
+    color: #bdbdbd !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+}
+
+.datepicker-cell.day.selected {
+    background-color: #1d4ed8 !important; /* biru */
+    color: #ffffff !important;
+}
