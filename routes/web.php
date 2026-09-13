@@ -26,6 +26,10 @@ use App\Http\Controllers\Pegawai\RiwayatTransaksiController;
 //     return view('dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Landing: guests see the login page; authenticated users are bounced to
+// their role dashboard by the `guest` middleware on the login route.
+Route::redirect('/', '/login');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
