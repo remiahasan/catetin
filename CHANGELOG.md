@@ -39,6 +39,12 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Entrypoint now verifies app credentials with a real query and exits with an
   actionable message instead of looping on 1045 (`mysqladmin ping` only proves
   liveness, not authentication).
+- Corrected Blade component class casing (`SidebarItem`, `PlusButton`) that
+  worked on case-insensitive filesystems but fatally broke autoloading (and
+  `view:cache`) on Linux.
+- Enabled the Apache `remoteip` module required by the vhost's
+  `RemoteIPHeader` directive; added `--skip-ssl` to entrypoint MySQL client
+  checks (server uses a self-signed cert; traffic stays in-Compose-network).
 
 ## [0.1.0] - 2026-08-20
 - Initial project: Laravel 12 + Breeze authentication, owner (dashboard, user
