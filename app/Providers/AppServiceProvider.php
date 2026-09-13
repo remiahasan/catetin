@@ -33,31 +33,6 @@ class AppServiceProvider extends ServiceProvider
                     // dd($businesses);
 
                     $view->with('businesses', $businesses);
-
-                    // Sidebar dropdowns expect these exact variable names.
-                    // Items without a `route` render as disabled labels, so
-                    // the placeholders keep fresh installs (no businesses
-                    // yet) from hitting missing-parameter route errors.
-                    $view->with(
-                        'kelolaStokDropdown',
-                        $businesses->map(fn ($b) => [
-                            'label' => $b->name,
-                            'route' => 'admin.manage-stock',
-                            'params' => [$b->id],
-                        ])->values()->all() ?: [
-                            ['label' => 'Belum ada usaha', 'route' => null],
-                        ]
-                    );
-                    $view->with(
-                        'businesItems',
-                        $businesses->map(fn ($b) => [
-                            'label' => $b->name,
-                            'route' => 'admin.laporan',
-                            'params' => [$b->id],
-                        ])->values()->all() ?: [
-                            ['label' => 'Belum ada usaha', 'route' => null],
-                        ]
-                    );
                 }
             }
         });

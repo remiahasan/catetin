@@ -24,7 +24,12 @@
                 'params' => ['id' => $b->id],
             ],
         )
-        ->toArray();
+        ->toArray() ?: [
+            // Empty-state placeholder: items without a `route` render as a
+            // disabled label, so a fresh install (no businesses yet) never
+            // reaches route('admin.laporan') without its {id} parameter.
+            ['label' => 'Belum ada usaha', 'route' => null],
+        ];
 @endphp
 <aside
     class="max-w-62.5 ease-nav-brand z-50 fixed inset-y-0 my-4 block w-full  -translate-x-full flex-wrap items-center justify-between overflow-y-auto rounded-2xl border-0 bg-white p-0 antialiased shadow-none transition-transform duration-200 lg:left-0 lg:translate-x-0 lg:bg-transparent"
