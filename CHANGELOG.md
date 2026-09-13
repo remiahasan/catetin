@@ -30,6 +30,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 - Compose file renamed to the canonical `compose.yml`.
 
+### Fixed
+- Single source of truth for DB credentials (`DB_APP_USER` + `DB_PASSWORD`;
+  compose sets both the MySQL user and the app login from them). The previous
+  `DB_USERNAME_NONROOT`/`DB_PASSWORD_NONROOT` pair could silently disagree
+  with the app side (MySQL creates users only at first init), causing 1045
+  access-denied restart loops.
+- Entrypoint now verifies app credentials with a real query and exits with an
+  actionable message instead of looping on 1045 (`mysqladmin ping` only proves
+  liveness, not authentication).
+
 ## [0.1.0] - 2026-08-20
 - Initial project: Laravel 12 + Breeze authentication, owner (dashboard, user
   verification, business/menu/category/stock/reports) and pegawai (POS

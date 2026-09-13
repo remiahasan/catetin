@@ -14,6 +14,9 @@ services:
       # Enforce container networking (override whatever is in .env)
       DB_HOST: db
       DB_PORT: 3306
+      # Single source of truth for the app DB user: compose sets both sides,
+      # so there is no second credential pair that can silently disagree.
+      DB_USERNAME: "${DB_APP_USER:-catetin}"
       # Behind Traefik TLS termination
       TRUSTED_PROXIES: "*"
       APP_URL: "${APP_URL:-https://catetin.icu}"
@@ -45,9 +48,11 @@ services:
     environment:
       MYSQL_DATABASE: "${DB_DATABASE:-pbl_sem_4}"
       MYSQL_ROOT_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD in .env}"
-      # Optional non-root app user (recommended). Leave empty to skip.
-      MYSQL_USER: "${DB_USERNAME_NONROOT:-}"
-      MYSQL_PASSWORD: "${DB_PASSWORD_NONROOT:-}"
+      # Same single source of truth: the app user is created from the
+      # credentials the app connects with. MySQL only creates users at
+      # first init, so a drifting second pair caused 1045 access-denied.
+      MYSQL_USER: "${DB_APP_USER:-catetin}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD in .env}"
     volumes:
       - "${DATA_ROOT:-/opt/app-data/catetin-prod}/mysql:/var/lib/mysql"
     # NOT published: internal to compose network only (secure by default).
