@@ -1,0 +1,25 @@
+# Dynamic Configuration for Catetin Production over WireGuard VPN
+# Copy to /etc/traefik/dynamic/catetin-prod.yml on the Traefik gateway to activate
+
+http:
+  routers:
+    catetin-prod:
+      rule: "Host(`catetin.icu`) || Host(`www.catetin.icu`)"
+      entryPoints:
+        - websecure
+      service: catetin-prod-backend
+      tls:
+        certResolver: dns-resolver
+        domains:
+          - main: "catetin.icu"
+            sans:
+              - "*.catetin.icu"
+      middlewares:
+        - security-headers@file
+        - custom-error-pages@file
+
+  services:
+    catetin-prod-backend:
+      loadBalancer:
+        servers:
+          - url: "http://10.10.0.2:8082"

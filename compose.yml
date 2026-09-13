@@ -1,0 +1,58 @@
+# Service server layout:
+#   project: /opt/apps/catetin-prod   (this repo checked out here)
+#   data:    /opt/app-data/catetin-prod/{mysql,storage,backups}
+name: catetin-prod
+
+services:
+  app:
+    build: .
+    container_name: catetin-prod-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Enforce container networking (override whatever is in .env)
+      DB_HOST: db
+      DB_PORT: 3306
+      # Behind Traefik TLS termination
+      TRUSTED_PROXIES: "*"
+      APP_URL: "${APP_URL:-https://catetin.icu}"
+    ports:
+      # Published for the reverse proxy over the private network.
+      # Restrict this port to the private network at the host firewall.
+      - "${APP_PORT:-8082}:80"
+    volumes:
+      # Host bind mounts under /opt/app-data (matches server convention).
+      # public/storage is NOT mounted: artisan storage:link symlinks it
+      # into storage/app/public, which already lives in persisted storage.
+      - "${DATA_ROOT:-/opt/app-data/catetin-prod}/storage:/var/www/html/storage"
+    depends_on:
+      db:
+        condition: service_healthy
+    # Laravel exposes its built-in health route at /up (see bootstrap/app.php)
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  db:
+    image: mysql:8.0
+    container_name: catetin-prod-db
+    restart: unless-stopped
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE:-pbl_sem_4}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD:?Set DB_PASSWORD in .env}"
+      # Optional non-root app user (recommended). Leave empty to skip.
+      MYSQL_USER: "${DB_USERNAME_NONROOT:-}"
+      MYSQL_PASSWORD: "${DB_PASSWORD_NONROOT:-}"
+    volumes:
+      - "${DATA_ROOT:-/opt/app-data/catetin-prod}/mysql:/var/lib/mysql"
+    # NOT published: internal to compose network only (secure by default).
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p$${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5

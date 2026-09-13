@@ -1,0 +1,16 @@
+# Keep secrets and build noise out of the image layers.
+.git
+.github
+node_modules
+vendor
+.env*
+traefik
+compose.yml
+compose.yaml
+compose.*.yml
+compose.*.yaml
+docker-compose*.yml
+docker-compose*.yaml
+tests
+.phpunit.cache
+.phpunit.result.cache

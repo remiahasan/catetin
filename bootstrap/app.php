@@ -16,6 +16,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // TLS terminates at the reverse proxy, which forwards plain HTTP
+        // over the private network; trust it so url()/route() emit https.
+        $middleware->trustProxies(at: '*');
         $middleware->alias([
             'guest' => RedirecIfAuthenticated::class,
             'owner' => OwnerMiddleware::class,

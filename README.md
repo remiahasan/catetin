@@ -1,66 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Catetin
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+![Laravel](https://img.shields.io/badge/Laravel-12-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PHP](https://img.shields.io/badge/PHP-8.2-777BB4?style=for-the-badge&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Alpine.js](https://img.shields.io/badge/Alpine.js-3-8BC0D0?style=for-the-badge&logo=alpinedotjs&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Traefik](https://img.shields.io/badge/Traefik-reverse_proxy-24A1C1?style=for-the-badge&logo=traefikproxy&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+[![CI](https://github.com/remiahasan/catetin/actions/workflows/ci.yml/badge.svg)](https://github.com/remiahasan/catetin/actions/workflows/ci.yml)
 
-## About Laravel
+**Catetin** is a point-of-sale (POS) and inventory management web app for culinary businesses (cafes, food stalls, small restaurants). Owners manage multiple businesses, menus, categories, stock, users, and revenue reports from an admin dashboard; cashiers (*pegawai*) run daily sales through a cart-and-checkout POS interface with stock deduction and transaction history. The UI is in Indonesian.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+> Original source: <https://github.com/remiahasan/catetin.git>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Roles & Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+| Role | Area | What it does |
+|---|---|---|
+| Owner | Dashboard | Revenue charts (weekly/monthly), business overview |
+| Owner | Verify Users | Approve / reject / edit / delete user accounts |
+| Owner | Kelola Bisnis | CRUD for each business/outlet |
+| Owner | Menu & Kategori | Menu items and categories per business |
+| Owner | Stock & Laporan | Stock levels, stock history/additions, sales reports per business and per employee |
+| Pegawai | Transaksi (POS) | Browse menus by category, cart, quantity editing, checkout |
+| Pegawai | Update Stok | Reduce stock on use (e.g. ingredients consumed) |
+| Pegawai | Riwayat Transaksi | Personal sales history |
+| All | Profile | Profile edit, photo upload |
 
-## Learning Laravel
+## Tech Stack
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+| Layer | Technology |
+|---|---|
+| Backend | Laravel 12, PHP 8.2 |
+| Auth | Laravel Breeze + Sanctum |
+| Database | MySQL 8 (`pbl_sem_4` by default) |
+| Frontend | Blade, Tailwind CSS 3, Alpine.js, Flowbite |
+| Charts / UX | ApexCharts, SweetAlert2, Flowbite Datepicker |
+| Build | Vite 6 (`npm run dev` / `npm run build`) |
+| Prod runtime | Docker (`php:8.2-apache` + MySQL 8), Traefik reverse proxy |
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP ^8.2 with `pdo_mysql, bcmath, intl, zip, gd, exif, pcntl, opcache`
+- Composer 2, Node 20 + npm
+- MySQL 8 (or Docker, which provides it)
+- Docker 24+ with Compose v2 (for containerized runs)
 
-## Laravel Sponsors
+## Run It
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### A. Classic local setup (no Docker)
 
-### Premium Partners
+```bash
+cp .env.example .env
+composer install
+php artisan key:generate
+# point DB_* in .env to your MySQL, then:
+php artisan migrate
+npm install
+npm run build        # or: npm run dev  (for Vite HMR)
+php artisan serve    # http://localhost:8000
+```
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+### B. Local development with Docker (hot reloading)
 
-## Contributing
+Containers for PHP/Apache, MySQL, and the Vite dev server. PHP/Blade edits apply on the next request; CSS/JS hot-reloads in the browser.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+cp .env.dev.example .env.dev
+# fill APP_KEY + DB_PASSWORD in .env.dev
+# (generate a key without local PHP: docker compose -f compose.yml -f compose.dev.yml --env-file .env.dev run --rm app php artisan key:generate --show)
+docker compose -f compose.yml -f compose.dev.yml --env-file .env.dev up -d --build
+```
 
-## Code of Conduct
+- App: <http://localhost:8082> · Vite HMR: `ws://localhost:5173`
+- `APP_PORT` / `VITE_HMR_HOST` in `.env.dev` adjust the ports/host if needed.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### C. Production with Docker + Traefik
 
-## Security Vulnerabilities
+The app container serves plain HTTP; TLS terminates at Traefik on a separate reverse-proxy host, which forwards over the private network.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**On the service server** (project checkout, e.g. `/opt/apps/catetin-prod`):
+
+```bash
+cp .env.docker.example .env
+# fill APP_KEY + DB_PASSWORD in .env
+mkdir -p /opt/app-data/catetin-prod/{mysql,storage,backups}
+docker compose up -d --build
+```
+
+Key `.env` values: `APP_URL=https://your-domain.com`, `APP_PORT=8082`, `DATA_ROOT=/opt/app-data/catetin-prod`. MySQL is not published — it stays inside the Compose network. Restrict `APP_PORT` to the private network at the host firewall.
+
+**On the reverse-proxy server** (Traefik with file provider + DNS-challenge resolver + shared middlewares): copy `traefik/catetin-prod.yml` to the dynamic-config directory (e.g. `/etc/traefik/dynamic/catetin-prod.yml`) and set the backend URL to the service server:
+
+```yaml
+http:
+  routers:
+    catetin-prod:
+      rule: "Host(`your-domain.com`)"
+      entryPoints: [websecure]
+      service: catetin-prod-backend
+      tls:
+        certResolver: dns-resolver
+        domains: [{ main: "your-domain.com", sans: ["*.your-domain.com"] }]
+      middlewares: [security-headers@file, custom-error-pages@file]
+  services:
+    catetin-prod-backend:
+      loadBalancer:
+        servers: [{ url: "http://<service-server>:8082" }]
+```
+
+Rename `dns-resolver` if your LetsEncrypt resolver is called differently.
+
+## Useful Commands
+
+```bash
+php artisan migrate --force          # run inside app container in prod
+php artisan storage:link --force     # handled automatically by entrypoint
+docker compose exec app php artisan tinker
+docker compose logs -f app
+```
+
+## Project Layout (highlights)
+
+```
+app/Http/Controllers/{Admin,Pegawai,Auth}  # owner / cashier / auth logic
+routes/{web,auth}.php                       # role middleware: owner, pegawai
+resources/views/{admin,pegawai,auth}        # Blade UI (Indonesian)
+database/migrations/                        # business, users, menus, stock, cart, transactions
+compose.yml / compose.dev.yml               # prod / local-dev containers
+.docker/{apache,php,entrypoint.sh}          # vhost, php.ini, boot script
+traefik/catetin-prod.yml                    # Traefik dynamic config (proxy host)
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT — see the [Laravel license](https://opensource.org/licenses/MIT). Application code originates from the repository above.

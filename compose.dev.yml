@@ -1,0 +1,65 @@
+# Local development overlay — explicit file so production stays untouched.
+#
+# Usage (from repo root, on your laptop):
+#   cp .env.dev.example .env.dev   # then fill APP_KEY + DB_PASSWORD
+#   docker compose -f compose.yml -f compose.dev.yml --env-file .env.dev up -d --build
+#
+#   App: http://localhost:8082   Vite HMR: ws://localhost:5173
+#
+# Hot reloading:
+#   - PHP/Blade/routes/config: source is bind-mounted; entrypoint skips
+#     config:cache/route:cache/view:cache when APP_ENV != production.
+#   - CSS/JS: `vite` service runs `npm run dev`; the browser pulls updates
+#     over the HMR websocket (see server.hmr in vite.config.js).
+name: catetin-dev
+
+services:
+  app:
+    container_name: catetin-dev-app
+    env_file:
+      - .env.dev
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      TRUSTED_PROXIES: "*"
+      APP_URL: "http://localhost:${APP_PORT:-8082}"
+    volumes:
+      # Live source mount: every request reads current files from disk.
+      - .:/var/www/html
+      # Anonymous volumes keep image-built Linux deps: the host has no
+      # vendor/, and host node_modules (if any) is Windows-built.
+      - /var/www/html/vendor
+      - /var/www/html/node_modules
+      - storage_data_dev:/var/www/html/storage
+      # Dev PHP tuning: re-enables opcache timestamp checks so PHP edits
+      # reload per request (production image disables them for performance).
+      - ./.docker/php/dev.ini:/usr/local/etc/php/conf.d/zz-dev.ini:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  vite:
+    image: node:20-bookworm-slim
+    container_name: catetin-dev-vite
+    working_dir: /app
+    command: sh -c "npm ci && npm run dev"
+    env_file:
+      - .env.dev
+    environment:
+      VITE_HMR_HOST: "${VITE_HMR_HOST:-localhost}"
+      # Reliable file watching through Docker Desktop bind mounts.
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
+
+  db:
+    container_name: catetin-dev-db
+    volumes:
+      - db_data_dev:/var/lib/mysql
+
+volumes:
+  db_data_dev:
+  storage_data_dev:

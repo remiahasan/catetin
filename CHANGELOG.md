@@ -1,0 +1,36 @@
+# Changelog
+
+All notable changes to this project are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+## [Unreleased]
+
+### Added
+- Production Docker stack: multi-stage `Dockerfile` (Node 20 Vite build +
+  PHP 8.2-Apache runtime), `compose.yml` with `app` (MySQL 8) services,
+  host bind mounts under `/opt/app-data/catetin-prod`, and app healthcheck
+  against Laravel's `/up` route.
+- Local development overlay `compose.dev.yml` with source bind mounts, a
+  `vite` service for HMR, dev-only PHP tuning (`.docker/php/dev.ini`),
+  and lightweight `file`/`sync` drivers via `.env.dev.example`.
+- Traefik dynamic file `traefik/catetin-prod.yml` (DNS-challenge wildcard TLS,
+  shared security-headers and error-pages middlewares).
+- Apache vhost, production/dev PHP ini files, and entrypoint script that waits
+  for MySQL, links storage, migrates, and caches config only in production.
+- `.dockerignore` to keep secrets and build noise out of image layers.
+- TrustProxies (`at: '*'`) in `bootstrap/app.php` so URLs generate as `https`
+  behind the TLS-terminating reverse proxy.
+- Vite dev-server HMR block (`server.host`, `strictPort`, `VITE_HMR_HOST`).
+- Rewritten `README.md` (project description, badges, run instructions).
+- GitHub Actions CI (`.github/workflows/ci.yml`): Pest tests on SQLite,
+  Pint style check, Vite build, compose/traefik validation, image build smoke
+  test. No CD — deployment stays manual.
+- This changelog.
+
+### Changed
+- Compose file renamed to the canonical `compose.yml`.
+
+## [0.1.0] - 2026-08-20
+- Initial project: Laravel 12 + Breeze authentication, owner (dashboard, user
+  verification, business/menu/category/stock/reports) and pegawai (POS
+  transactions, cart, stock updates, history) modules.
