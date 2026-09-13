@@ -61,3 +61,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      # First-time data-dir init takes minutes on small disks. Without this,
+      # failures during init count toward `retries` and the DB is pronounced
+      # dead mid-birth on every fresh deploy.
+      start_period: 180s
