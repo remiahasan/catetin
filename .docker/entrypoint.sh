@@ -5,7 +5,9 @@ set -e
 if [ -n "$DB_HOST" ]; then
   echo "Waiting for database $DB_HOST:${DB_PORT:-3306}..."
   for i in $(seq 1 30); do
-    if mysqladmin ping -h"$DB_HOST" -P"${DB_PORT:-3306}" -u"$DB_USERNAME" -p"$DB_PASSWORD" --silent 2>/dev/null; then
+    # --skip-ssl: MySQL 8 uses a self-signed cert the client cannot verify;
+    # traffic stays inside the Compose network, so TLS adds nothing here.
+    if mysqladmin --skip-ssl ping -h"$DB_HOST" -P"${DB_PORT:-3306}" -u"$DB_USERNAME" -p"$DB_PASSWORD" --silent 2>/dev/null; then
       echo "Database reachable."
       break
     fi
@@ -23,7 +25,7 @@ fi
 if [ -n "$DB_HOST" ]; then
   DB_CHECK_DB=""
   [ -n "$DB_DATABASE" ] && DB_CHECK_DB="$DB_DATABASE"
-  if ! mysql -h"$DB_HOST" -P"${DB_PORT:-3306}" -u"$DB_USERNAME" -p"$DB_PASSWORD" \
+  if ! mysql --skip-ssl -h"$DB_HOST" -P"${DB_PORT:-3306}" -u"$DB_USERNAME" -p"$DB_PASSWORD" \
           -e "SELECT 1;" $DB_CHECK_DB >/dev/null 2>/tmp/dbcheck.err; then
     echo "ERROR: cannot authenticate to MySQL as user '$DB_USERNAME'."
     cat /tmp/dbcheck.err || true
