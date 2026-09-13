@@ -6,24 +6,21 @@ use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
-class SIdebarItem extends Component
+class PlusButton extends Component
 {
-
-    public $route;
-    public $label;
-
-    public function __construct($route, $label)
+    /**
+     * Create a new component instance.
+     */
+    public function __construct()
     {
-        $this->route = $route;
-        $this->label = $label;
+        //
     }
-
 
     /**
      * Get the view / contents that represent the component.
      */
     public function render(): View|Closure|string
     {
-        return view('components.ui.sidebar-item');
+        return view('components.plus-button');
     }
 }
