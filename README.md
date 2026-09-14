@@ -28,6 +28,7 @@
 | Pegawai | Update Stok | Reduce stock on use (e.g. ingredients consumed) |
 | Pegawai | Riwayat Transaksi | Personal sales history |
 | All | Profile | Profile edit, photo upload |
+| All | Landing (`/`) | Redirects to login; logged-in users bounce to their role dashboard |
 
 ## Tech Stack
 
@@ -90,7 +91,7 @@ mkdir -p /opt/app-data/catetin-prod/{mysql,storage,backups}
 docker compose up -d --build
 ```
 
-Key `.env` values: `APP_URL=https://your-domain.com`, `APP_PORT=8082`, `DATA_ROOT=/opt/app-data/catetin-prod`. MySQL is not published — it stays inside the Compose network. Restrict `APP_PORT` to the private network at the host firewall.
+Key `.env` values: `APP_URL=https://your-domain.com`, `APP_PORT=8082`, `DATA_ROOT=/opt/app-data/catetin-prod`, `DB_APP_USER=catetin` (default), single `DB_PASSWORD` shared by MySQL root and the app user (compose derives both logins from it — there is intentionally no second pair). MySQL is not published — it stays inside the Compose network. Restrict `APP_PORT` to the private network at the host firewall.
 
 **On the reverse-proxy server** (Traefik with file provider + DNS-challenge resolver + shared middlewares): copy `traefik/catetin-prod.yml` to the dynamic-config directory (e.g. `/etc/traefik/dynamic/catetin-prod.yml`) and set the backend URL to the service server:
 
@@ -126,6 +127,10 @@ docker compose logs -f app
 
 - **Production:** uncomment `SEED_OWNER_*` in `.env`, run `docker compose exec app php artisan db:seed` once (creates/updates *only* the owner account), then delete the password line. Demo data additionally requires `SEED_DEMO=true`, which must never be set in production.
 - **Development:** `.env.dev` ships `SEED_DEMO=true`, so `db:seed` also loads the sample stalls, menus, stock, and a week of transactions.
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`, no deploy jobs): frontend Vite build plus compose/traefik validation and an image build smoke test. The PHP tests & style job is temporarily skipped until the Pint formatting commit is re-applied — see `CHANGELOG.md`.
 
 ## Project Layout (highlights)
 
