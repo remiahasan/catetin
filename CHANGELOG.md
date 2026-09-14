@@ -26,6 +26,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   Pint style check, Vite build, compose/traefik validation, image build smoke
   test. No CD — deployment stays manual.
 - This changelog.
+- `OwnerSeeder` (env-driven `SEED_OWNER_*`, idempotent, 12-char minimum,
+  skips cleanly when unset) and `DemoSeeder` gate: `DatabaseSeeder` loads
+  demo stalls/menus/sales only with explicit `SEED_DEMO=true`, so production
+  seeding can never inject fake data by accident. The previously hardcoded
+  demo owner credential is gone from `DatabaseSeeder`.
 
 ### Changed
 - Compose file renamed to the canonical `compose.yml`.

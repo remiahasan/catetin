@@ -2,47 +2,31 @@
 
 namespace Database\Seeders;
 
-
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
     /**
      * Seed the application's database.
+     *
+     * Always safe: bootstraps the owner account from SEED_OWNER_* env
+     * (skipped quietly when unset). Demo data runs ONLY with explicit
+     * opt-in — never on production by accident:
+     *
+     *   SEED_DEMO=true php artisan db:seed
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $this->call([
-            BusinessSeeder::class,
-            PegawaiSeeder::class,
+            OwnerSeeder::class,
         ]);
 
-        User::factory()->create([
-            'name' => 'Nita Nina Wibawa',
-            'email' => 'nita@gmail.com',
-            'password' => 'nita1234',
-            'role' => 'owner',
-            'is_verified' => true,
-        ]);
-
-        // $categories = ['Smoothies', 'Juice', 'Other'];
-
-        // foreach ($categories as $category) {
-        //     Category::create(['nama' => $category]);
-        // }
-
-        $this->call([
-            // SuperCategorySeeder::class,
-            CategorySeeder::class,
-            MenuSeeder::class,
-            // SizeSeeder::class,
-            // SizePriceSeeder::class,
-            StockSeeder::class,
-            TransaksiSeeder::class,
-        ]);
+        if (env('SEED_DEMO', false)) {
+            $this->call([
+                DemoSeeder::class,
+            ]);
+        } else {
+            $this->command?->warn('Demo data skipped (set SEED_DEMO=true to include it).');
+        }
     }
 }

@@ -122,6 +122,12 @@ docker compose exec app php artisan tinker
 docker compose logs -f app
 ```
 
+## Seed Data
+
+- **Production:** uncomment `SEED_OWNER_*` in `.env`, run `docker compose exec app php artisan db:seed` once (creates/updates *only* the owner account), then delete the password line. Demo data additionally requires `SEED_DEMO=true`, which must never be set in production.
+- **Development:** `.env.dev` ships `SEED_DEMO=true`, so `db:seed` also loads the sample stalls, menus, stock, and a week of transactions.
+- Prefer it interactive? `php artisan app:create-owner you@example.com` instead — same result, password prompted securely.
+
 ## Project Layout (highlights)
 
 ```
